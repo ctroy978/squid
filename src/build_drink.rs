@@ -1,14 +1,24 @@
 use gloo::console::log;
-use serde::Deserialize;
+use wasm_bindgen_futures;
+
+use serde::{Deserialize, Serialize};
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
+#[derive(Serialize, Deserialize, Clone)]
 pub struct BuildDrink {
+    username: String,
+}
+
+#[derive(Serialize, Deserialize)]
+
+pub struct SendBuild {
     username: String,
 }
 
 pub enum Msg {
     SetUsername(String),
+    DoNothing,
 }
 
 impl Component for BuildDrink {
@@ -26,6 +36,7 @@ impl Component for BuildDrink {
             Msg::SetUsername(val) => {
                 self.username = val;
             }
+            Msg::DoNothing => (),
         }
         log!(&self.username);
         true
@@ -39,10 +50,18 @@ impl Component for BuildDrink {
         });
 
         let onclick = ctx.link().callback(move |e: MouseEvent| {
-            let input_el: HtmlInputElement = e.target_unchecked_into();
-            let value = input_el.value();
-            log!(value);
-            Msg::SetUsername("tada".to_string())
+            let sendit = SendBuild {
+                username: "help".to_string(),
+            };
+            //post to server
+            wasm_bindgen_futures::spawn_local(async move {
+                let response = reqwest::Client::new()
+                    .post("http://192.168.1.113:8080/build")
+                    .json(&sendit)
+                    .send()
+                    .await;
+            });
+            Msg::DoNothing
         });
 
         html! {
