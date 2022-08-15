@@ -1,79 +1,90 @@
 use gloo::console::log;
-use wasm_bindgen_futures;
-
+use reqwest::header::CONTENT_TYPE;
 use serde::{Deserialize, Serialize};
+use serde_json;
+use wasm_bindgen_futures;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
-#[derive(Serialize, Deserialize, Clone)]
-pub struct BuildDrink {
-    username: String,
-}
-
-#[derive(Serialize, Deserialize)]
-
-pub struct SendBuild {
-    username: String,
-}
-
 pub enum Msg {
-    SetUsername(String),
+    SetTitle(String),
+    SendDrink,
     DoNothing,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
+pub struct BuildDrink {
+    title: String,
 }
 
 impl Component for BuildDrink {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_ctx: &yew::Context<Self>) -> Self {
-        Self {
-            username: String::new(),
-        }
+    fn create(ctx: &Context<Self>) -> Self {
+        Self::default()
     }
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            Msg::SetUsername(val) => {
-                self.username = val;
+            Msg::SetTitle(val) => {
+                self.title = val;
+            }
+
+            Msg::SendDrink => {
+                let data_serialized = serde_json::to_string_pretty(&self).unwrap();
+                log!(&data_serialized);
+                post_server(data_serialized);
+                //go get api
+                /*
+                wasm_bindgen_futures::spawn_local(async move {
+                    let res = reqwest::Client::new()
+                        .post("https://192.168.1.113/drink")
+                        .json(&data_serialized)
+                        .send()
+                        .await;
+                });
+                */
             }
             Msg::DoNothing => (),
-        }
-        log!(&self.username);
+        };
         true
     }
 
-    fn view(&self, ctx: &yew::Context<Self>) -> Html {
-        let onchange = ctx.link().callback(|e: Event| {
-            let input_el: HtmlInputElement = e.target_unchecked_into();
-            let value = input_el.value();
-            Msg::SetUsername(value)
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        let get_title = ctx.link().callback(move |e: Event| {
+            let input_title: HtmlInputElement = e.target_unchecked_into();
+            Msg::SetTitle(input_title.value())
         });
 
-        let onclick = ctx.link().callback(move |e: MouseEvent| {
-            let sendit = SendBuild {
-                username: "help".to_string(),
-            };
-            //post to server
-            wasm_bindgen_futures::spawn_local(async move {
-                let response = reqwest::Client::new()
-                    .post("http://192.168.1.113:8080/build")
-                    .json(&sendit)
-                    .send()
-                    .await;
-            });
-            Msg::DoNothing
-        });
+        let send_drink = ctx.link().callback(move |e: MouseEvent| Msg::SendDrink);
 
         html! {
-            <>
             <div>
-                <h1>{"Build That Drink"}</h1>
-                <form>
-                    <input {onchange} type = "text" name="username" />
-                    <button {onclick}>{"Submit"}</button>
-                </form>
+                <h1>{"build drink"}</h1>
+                <input type="text" placeholder = "Drink name? " onchange = {get_title} />
+                <button onclick = {send_drink}>{"Submit"}</button>
             </div>
-            </>
         }
     }
+}
+
+fn post_server(data: String) {
+    //rebuild struct for reqwest
+    let str_data = data.as_str();
+    let build_now: BuildDrink = serde_json::from_str(str_data).unwrap();
+    wasm_bindgen_futures::spawn_local(async move {
+        let res = reqwest::Client::new()
+            .post("http://192.168.1.113:8080/build")
+            .json(&build_now)
+            .send()
+            .await
+            .unwrap();
+
+        let t = res.text().await;
+        match t {
+            Ok(val) => log!(val),
+            Err(e) => log!(format!("error {}", e)),
+        }
+    });
 }
