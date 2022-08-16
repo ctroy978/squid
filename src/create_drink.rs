@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use yew::prelude::*;
 
 use crate::create_ingredient::CreateIngredient;
+use crate::post_drink::post_server;
 use crate::text_box::TextBox;
 
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
@@ -56,6 +57,7 @@ pub fn create_drink() -> Html {
         cloned_state.set(data);
     });
 
+    //handle ingredients
     let cloned_state = state.clone();
     let handle_ingredient = Callback::from(move |value: String| {
         let mut data = (*cloned_state).clone();
@@ -68,6 +70,14 @@ pub fn create_drink() -> Html {
         .iter()
         .map(|ing| html! {<li>{ing}</li>});
 
+    //handle upload
+    let cloned_state = state.clone();
+    let post_drink = Callback::from(move |e: MouseEvent| {
+        let data = (*cloned_state).clone();
+        let serial_data = serde_json::to_string(&data).unwrap();
+        post_server(serial_data);
+    });
+
     html! {
 
         <>
@@ -79,6 +89,7 @@ pub fn create_drink() -> Html {
         <br />
         <CreateIngredient handle_onclick = {handle_ingredient}/>
         <div>
+
             <p>{"Drink name: "}{&state.title}</p>
             <p>{"Rank: "}{&state.rank}</p>
             <p>{"Directions: "}{&state.directions}</p>
@@ -87,7 +98,7 @@ pub fn create_drink() -> Html {
                 {for ingredient_list}
             </ul>
         </div>
-
+        <button onclick={post_drink}>{"Post drink to server?"}</button>
 
 
         </>

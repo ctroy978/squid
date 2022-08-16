@@ -1,7 +1,7 @@
 use gloo::console::log;
 use serde::{Deserialize, Serialize};
 use serde_json;
-use web_sys::HtmlInputElement;
+use web_sys::{HtmlInputElement, Node};
 use yew::prelude::*;
 
 use crate::text_box::TextBox;
@@ -47,16 +47,14 @@ pub fn create_ingredient(props: &Props) -> Html {
     let handle_on_click = props.handle_onclick.clone();
     let onclick = Callback::from(move |e: MouseEvent| {
         //unpack
-
         let mut data = (*cloned_state).clone();
         let serialize_data = serde_json::to_string(&data).unwrap();
-
         handle_on_click.emit(serialize_data);
     });
 
     html! {
         <div>
-        <TextBox name = "label" place_holder = "Enter ingredient name" handle_onchange={handle_label} />
+        <TextBox  name = "label" place_holder = "Enter ingredient name" handle_onchange={handle_label} />
         <TextBox name = "unit" place_holder = "Enter unit of measure (ex. ounce)" handle_onchange={handle_unit} />
         <TextBox name = "qty" place_holder = "How many?" handle_onchange={handle_qty} />
         <button onclick = {onclick}> {"Add this Ingredient"}</button>

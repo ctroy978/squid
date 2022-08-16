@@ -33,7 +33,7 @@ pub fn fetch_drink() -> Html {
 
         //go get api
         wasm_bindgen_futures::spawn_local(async move {
-            let response = reqwest::get("http://192.168.1.113:8080/drink/palmetto")
+            let response = reqwest::get("http://192.168.1.113:8080/drink/Manhattan")
                 .await
                 .unwrap();
 
