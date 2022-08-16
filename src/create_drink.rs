@@ -14,6 +14,12 @@ struct AddIngredients {
     qty: String,
 }
 
+impl std::fmt::Display for AddIngredients {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "( {} {} of {})", self.qty, self.unit, self.label)
+    }
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 struct BuildDrink {
     pub title: String,
@@ -58,7 +64,12 @@ pub fn create_drink() -> Html {
         cloned_state.set(data);
     });
 
+    let ingredient_list = (*state.add_ingredient)
+        .iter()
+        .map(|ing| html! {<li>{ing}</li>});
+
     html! {
+
         <>
         <h1>{"drink comp"}</h1>
 
@@ -67,8 +78,16 @@ pub fn create_drink() -> Html {
         <TextBox name = "directions"  place_holder = {"Step by step directions?"} handle_onchange = {handle_dir}/>
         <br />
         <CreateIngredient handle_onclick = {handle_ingredient}/>
+        <div>
+            <p>{"Drink name: "}{&state.title}</p>
+            <p>{"Rank: "}{&state.rank}</p>
+            <p>{"Directions: "}{&state.directions}</p>
 
-        <p>{&state.title}</p>
+            <ul>
+                {for ingredient_list}
+            </ul>
+        </div>
+
 
 
         </>
