@@ -8,6 +8,7 @@ use yew::prelude::*;
 pub struct Drink {
     title: String,
     rank: i32,
+    booz: String,
     directions: String,
     ingredients: Vec<String>,
 }
@@ -17,6 +18,7 @@ impl Default for Drink {
         Self {
             title: String::from("Nothing to drink yet."),
             rank: 0,
+            booz: String::from("Core booz for this drink."),
             directions: String::from("Still waiting for directions"),
             ingredients: Vec::new(),
         }
@@ -33,7 +35,7 @@ pub fn fetch_drink() -> Html {
 
         //go get api
         wasm_bindgen_futures::spawn_local(async move {
-            let response = reqwest::get("http://192.168.1.113:8080/drink/Manhattan")
+            let response = reqwest::get("http://192.168.1.113:8080/drink/manhattan")
                 .await
                 .unwrap();
 
@@ -44,6 +46,7 @@ pub fn fetch_drink() -> Html {
             let title = v["title"].as_str().unwrap();
             let directions = v["directions"].as_str().unwrap();
             let rank = v["rank"].as_f64().unwrap();
+            let booz: &str = v["booz"].as_str().unwrap();
 
             //only way I know how to pull Values out of a json Vec.
             let ingredients_array = v["ingredients"].as_array().unwrap();
@@ -55,6 +58,7 @@ pub fn fetch_drink() -> Html {
             let drink = Drink {
                 title: title.into(),
                 rank: rank as i32,
+                booz: booz.into(),
                 directions: directions.into(),
                 ingredients,
             };

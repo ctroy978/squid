@@ -14,6 +14,7 @@ pub struct AddIngredient {
 pub struct BuildDrink {
     title: String,
     rank: String,
+    booz: String,
     directions: String,
     add_ingredient: Vec<AddIngredient>,
 }

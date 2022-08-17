@@ -17,12 +17,13 @@ enum Route {
 }
 
 mod build_drink;
+mod choose_booz;
+mod components;
 mod create_drink;
 mod create_ingredient;
 mod fetch_drink;
-mod post_drink;
-mod text_box;
 use build_drink::BuildDrink;
+use components::{post_drink, text_box};
 use create_drink::CreateDrink;
 use fetch_drink::FetchDrink;
 

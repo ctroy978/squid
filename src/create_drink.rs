@@ -25,6 +25,7 @@ impl std::fmt::Display for AddIngredients {
 struct BuildDrink {
     pub title: String,
     pub rank: String,
+    pub booz: String,
     pub directions: String,
     pub add_ingredient: Vec<AddIngredients>,
 }
@@ -46,6 +47,14 @@ pub fn create_drink() -> Html {
     let handle_rank = Callback::from(move |value| {
         let mut data = (*cloned_state).clone();
         data.rank = value;
+        cloned_state.set(data);
+    });
+
+    //handle booz
+    let cloned_state = state.clone();
+    let handle_booz = Callback::from(move |value| {
+        let mut data = (*cloned_state).clone();
+        data.booz = value;
         cloned_state.set(data);
     });
 
@@ -81,10 +90,11 @@ pub fn create_drink() -> Html {
     html! {
 
         <>
-        <h1>{"drink comp"}</h1>
+        <h1>{"Let's Build a Drink!"}</h1>
 
         <TextBox name = "title"  place_holder = {"Drink's name?"} handle_onchange = {handle_title}/>
         <TextBox name = "rank"  place_holder = {"Drink's rank?"} handle_onchange = {handle_rank}/>
+        <TextBox name = "booz"  place_holder = {"Drink's booz?"} handle_onchange = {handle_booz}/>
         <TextBox name = "directions"  place_holder = {"Step by step directions?"} handle_onchange = {handle_dir}/>
         <br />
         <CreateIngredient handle_onclick = {handle_ingredient}/>
@@ -92,6 +102,7 @@ pub fn create_drink() -> Html {
 
             <p>{"Drink name: "}{&state.title}</p>
             <p>{"Rank: "}{&state.rank}</p>
+            <p>{"Booz: "}{&state.booz}</p>
             <p>{"Directions: "}{&state.directions}</p>
 
             <ul>
