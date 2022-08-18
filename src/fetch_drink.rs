@@ -1,8 +1,16 @@
 use gloo::console::log;
-use reqwest::get;
 use serde_json::Value;
 use wasm_bindgen_futures;
+use web_sys::HtmlInputElement;
 use yew::prelude::*;
+
+use crate::SERV_URL;
+use crate::{get_booze, nav_bar::NavBar};
+
+#[derive(Default, PartialEq, Clone)]
+pub struct BoozeSelect {
+    booze_select: Vec<String>,
+}
 
 #[derive(PartialEq, Clone)]
 pub struct Drink {
@@ -27,17 +35,45 @@ impl Default for Drink {
 
 #[function_component(FetchDrink)]
 pub fn fetch_drink() -> Html {
-    let drink_state = use_state::<Option<Drink>, _>(|| None);
-    let drink_state_out = drink_state.clone();
+    let mut fetch_button_var = String::new();
+    //fetch booze list of drinks
+    let booze_state = use_state(|| BoozeSelect::default());
+    let cloned_booze_state_out = booze_state.clone();
 
-    let onclick = Callback::from(move |_e: MouseEvent| {
-        let drink_state = drink_state.clone();
+    let handle_booze_select = Callback::from(move |value| {
+        let booze_state = booze_state.clone();
+
+        let mut data = (*booze_state).clone();
 
         //go get api
+        let drink_url = format!("{}/search/{}", SERV_URL, value);
         wasm_bindgen_futures::spawn_local(async move {
-            let response = reqwest::get("http://192.168.1.113:8080/drink/manhattan")
-                .await
-                .unwrap();
+            let response = reqwest::get(drink_url).await.unwrap();
+
+            let text = response.text().await.unwrap();
+
+            let v: Vec<Value> = serde_json::from_str(&text).unwrap_or_default();
+            for v_drink in v {
+                let title = v_drink["title"].as_str().unwrap();
+                data.booze_select.push(String::from(title));
+            }
+            booze_state.set(data);
+        });
+    });
+
+    //fetch drink
+    let drink_state = use_state::<Option<Drink>, _>(|| None);
+
+    let drink_state_out = drink_state.clone();
+    let onclick = Callback::from(move |e: MouseEvent| {
+        let drink_state = drink_state.clone();
+        let input: HtmlInputElement = e.target_unchecked_into();
+        let input = input.value();
+
+        //go get api
+        let drink_url = format!("http://192.168.1.113:8080/drink/{}", input);
+        wasm_bindgen_futures::spawn_local(async move {
+            let response = reqwest::get(drink_url).await.unwrap();
 
             let text = response.text().await.unwrap();
 
@@ -79,9 +115,24 @@ pub fn fetch_drink() -> Html {
         })
         .collect::<Html>();
 
+    //build a list of drinks
+    let new_booze_state = (*cloned_booze_state_out).clone();
+    let list_drinks = new_booze_state.booze_select.iter().map(|title| {
+        html! {
+            <li>
+        <button  onclick = {&onclick} value = {title.to_string()} class = "button is-text">
+            {title}
+        </button>
+
+        </li>
+        }
+    });
+
     html! {
         <div>
-            <button {onclick}>{"get drink"}</button>
+            <NavBar handle_booze_onclick = {handle_booze_select}/>
+            <ul>{for list_drinks}</ul>
+            //<button onclick = {&onclick}>{"get drink"}</button>
             <p>{full_drink.title}</p>
             <p>{full_drink.rank}</p>
             <ul>{ingredients_li}</ul>

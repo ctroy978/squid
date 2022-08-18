@@ -32,6 +32,5 @@ pub fn post_server(data: String) {
             .unwrap();
 
         let returned_value = res.text().await;
-        log!(returned_value.unwrap());
     });
 }

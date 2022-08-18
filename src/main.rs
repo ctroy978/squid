@@ -1,14 +1,14 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+pub const SERV_URL: &str = "http://192.168.1.113:8080";
+
 #[derive(Clone, Routable, PartialEq)]
 enum Route {
     #[at("/")]
     Home,
     #[at("/fetch")]
     Fetch,
-    #[at("/build")]
-    Build,
     #[at("/create")]
     Create,
     #[not_found]
@@ -16,14 +16,12 @@ enum Route {
     NotFound,
 }
 
-mod build_drink;
-mod choose_booz;
 mod components;
 mod create_drink;
 mod create_ingredient;
 mod fetch_drink;
-use build_drink::BuildDrink;
-use components::{post_drink, text_box};
+
+use components::{get_booze, models, nav_bar, post_drink, text_box};
 use create_drink::CreateDrink;
 use fetch_drink::FetchDrink;
 
@@ -32,9 +30,6 @@ fn switch(routes: &Route) -> Html {
         Route::Home => html! { <h1>{ "Squid Drinker" }</h1> },
         Route::Fetch => html! {
             <FetchDrink />
-        },
-        Route::Build => html! {
-            <BuildDrink />
         },
         Route::Create => html! {
             <CreateDrink />

@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use yew::prelude::*;
 
 use crate::create_ingredient::CreateIngredient;
+use crate::nav_bar::NavBar;
 use crate::post_drink::post_server;
 use crate::text_box::TextBox;
 
@@ -88,8 +89,8 @@ pub fn create_drink() -> Html {
     });
 
     html! {
-
         <>
+
         <h1>{"Let's Build a Drink!"}</h1>
 
         <TextBox name = "title"  place_holder = {"Drink's name?"} handle_onchange = {handle_title}/>
