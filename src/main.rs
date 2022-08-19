@@ -21,13 +21,15 @@ mod create_drink;
 mod create_ingredient;
 mod fetch_drink;
 
-use components::{booze_selecter, get_booze, models, nav_bar, post_drink, text_box};
+use components::{booze_selecter, models, nav_bar, post_drink, text_area, text_box};
 use create_drink::CreateDrink;
 use fetch_drink::FetchDrink;
 
 fn switch(routes: &Route) -> Html {
     match routes {
-        Route::Home => html! { <h1>{ "Squid Drinker" }</h1> },
+        Route::Home => html! {
+            <FetchDrink />
+        },
         Route::Fetch => html! {
             <FetchDrink />
         },

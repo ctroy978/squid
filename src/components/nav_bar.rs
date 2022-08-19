@@ -21,9 +21,6 @@ pub fn nav_bar() -> Html {
         </a>
 
       </div>
-
-
-
         <div class="navbar-end">
         </div>
     </nav>

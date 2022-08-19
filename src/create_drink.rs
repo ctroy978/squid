@@ -4,11 +4,11 @@ use gloo::console::log;
 use serde::{Deserialize, Serialize};
 use yew::prelude::*;
 
+use crate::components::{
+    booze_selecter::BoozeSelecter, nav_bar::NavBar, post_drink::post_server, select_box::SelectBox,
+    text_area::TextArea, text_box::TextBox,
+};
 use crate::create_ingredient::CreateIngredient;
-use crate::nav_bar::NavBar;
-use crate::post_drink::post_server;
-use crate::text_box::TextBox;
-
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 struct AddIngredients {
     label: String,
@@ -37,9 +37,10 @@ pub fn create_drink() -> Html {
 
     //handle title
     let cloned_state = state.clone();
-    let handle_title = Callback::from(move |value| {
+    let handle_title = Callback::from(move |value: String| {
+        let trim_and_lower = &value.trim().to_lowercase();
         let mut data = (*cloned_state).clone();
-        data.title = value;
+        data.title = trim_and_lower.to_owned();
         cloned_state.set(data);
     });
 
@@ -53,9 +54,10 @@ pub fn create_drink() -> Html {
 
     //handle booz
     let cloned_state = state.clone();
-    let handle_booz = Callback::from(move |value| {
+    let handle_booz = Callback::from(move |value: String| {
+        let trim_and_lower = &value.trim().to_lowercase();
         let mut data = (*cloned_state).clone();
-        data.booz = value;
+        data.booz = trim_and_lower.to_owned();
         cloned_state.set(data);
     });
 
@@ -94,16 +96,18 @@ pub fn create_drink() -> Html {
 
         <section class="section">
             <div class = "containter">
+            <h1>{"Let's build a drink"}</h1>
                 <div class = "columns">
                     <div class = "column is-3">
 
-                        <h1>{"Let's Build a Drink!"}</h1>
 
                         <TextBox name = "title"  place_holder = {"Drink's name?"} handle_onchange = {handle_title}/>
                         <TextBox name = "rank"  place_holder = {"Drink's rank?"} handle_onchange = {handle_rank}/>
-                        <TextBox name = "booz"  place_holder = {"Drink's booz?"} handle_onchange = {handle_booz}/>
-                        <TextBox name = "directions"  place_holder = {"Step by step directions?"} handle_onchange = {handle_dir}/>
-                    </div>
+                        <div class="select">
+                            <SelectBox  handle_onchange = {handle_booz} />
+                        </div>
+                        <TextArea name = "directions" place_holder = {"Step by step directions"} handle_onchange = {handle_dir} />
+                        </div>
                     <div class="column is-3">
 
                         <CreateIngredient handle_onclick = {handle_ingredient}/>
