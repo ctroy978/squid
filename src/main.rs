@@ -21,7 +21,7 @@ mod create_drink;
 mod create_ingredient;
 mod fetch_drink;
 
-use components::{get_booze, models, nav_bar, post_drink, text_box};
+use components::{booze_selecter, get_booze, models, nav_bar, post_drink, text_box};
 use create_drink::CreateDrink;
 use fetch_drink::FetchDrink;
 

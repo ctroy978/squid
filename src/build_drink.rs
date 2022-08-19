@@ -5,7 +5,7 @@ use wasm_bindgen_futures;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
-use crate::text_box::TextBox;
+use crate::{text_box::TextBox};
 
 pub enum Msg {
     SetTitle(String),
@@ -78,7 +78,9 @@ impl Component for BuildDrink {
         let send_drink = ctx.link().callback(move |e: MouseEvent| Msg::SendDrink);
 
         html! {
+           
             <div>
+                
                 <h1>{"build drink"}</h1>
 
                 <input type="text" placeholder = "Drink name? " onchange = {get_title} />

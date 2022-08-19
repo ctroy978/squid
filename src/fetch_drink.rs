@@ -3,9 +3,10 @@ use serde_json::Value;
 use wasm_bindgen_futures;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
+use yew_router::prelude::*;
 
-use crate::SERV_URL;
-use crate::{get_booze, nav_bar::NavBar};
+use crate::{booze_selecter::BoozeSelecter, nav_bar::NavBar};
+use crate::{Route, SERV_URL};
 
 #[derive(Default, PartialEq, Clone)]
 pub struct BoozeSelect {
@@ -35,7 +36,6 @@ impl Default for Drink {
 
 #[function_component(FetchDrink)]
 pub fn fetch_drink() -> Html {
-    let mut fetch_button_var = String::new();
     //fetch booze list of drinks
     let booze_state = use_state(|| BoozeSelect::default());
     let cloned_booze_state_out = booze_state.clone();
@@ -71,7 +71,7 @@ pub fn fetch_drink() -> Html {
         let input = input.value();
 
         //go get api
-        let drink_url = format!("http://192.168.1.113:8080/drink/{}", input);
+        let drink_url = format!("{}/drink/{}", SERV_URL, input);
         wasm_bindgen_futures::spawn_local(async move {
             let response = reqwest::get(drink_url).await.unwrap();
 
@@ -120,7 +120,7 @@ pub fn fetch_drink() -> Html {
     let list_drinks = new_booze_state.booze_select.iter().map(|title| {
         html! {
             <li>
-        <button  onclick = {&onclick} value = {title.to_string()} class = "button is-text">
+        <button  onclick = {&onclick} value = {title.to_string()} class = "button is-text is-small">
             {title}
         </button>
 
@@ -130,13 +130,44 @@ pub fn fetch_drink() -> Html {
 
     html! {
         <div>
-            <NavBar handle_booze_onclick = {handle_booze_select}/>
-            <ul>{for list_drinks}</ul>
-            //<button onclick = {&onclick}>{"get drink"}</button>
-            <p>{full_drink.title}</p>
-            <p>{full_drink.rank}</p>
-            <ul>{ingredients_li}</ul>
-            <p>{full_drink.directions}</p>
+            <NavBar/>
+
+            //main
+            <section class="section">
+            <div class = "containter">
+            <div class = "columns">
+
+            <div class = "column is-2">
+                <h1 class="is-size-1, title">{"Want it"}</h1>
+                <BoozeSelecter handle_booze_onclick = {handle_booze_select} />
+            </div>
+            <div class = "column is-2">
+                <h1 class="is-size-1, title">{"List it"}</h1>
+                <ul>{for list_drinks}</ul>
+            </div>
+            <div class = "column is-3" >
+                <h1 class="is-size-1, title">{"Mix it"}</h1>
+
+                <p class="is-size-4">{full_drink.title}</p>
+                <p>{"Rank: "}{full_drink.rank}</p>
+
+                <h3 class = "is-size-4">{"Ingredients"}</h3>
+                <ul>{ingredients_li}</ul>
+
+                <h3 class="is-size-4">{"Directions"}</h3>
+                <p>{full_drink.directions}</p>
+            </div>
+            <div class = "column is-5">
+                <h1 class="is-size-1, title">{"Build it."}</h1>
+                <Link<Route> classes={classes!("button")} to={Route::Create}>{ "Build a Drink" }</Link<Route>>
+
+
+
+            </div>
+
+            </div>
+            </div>
+            </section>
 
         </div>
     }

@@ -57,7 +57,8 @@ pub fn create_ingredient(props: &Props) -> Html {
         <TextBox  name = "label" place_holder = "Enter ingredient name" handle_onchange={handle_label} />
         <TextBox name = "unit" place_holder = "Enter unit of measure (ex. ounce)" handle_onchange={handle_unit} />
         <TextBox name = "qty" place_holder = "How many?" handle_onchange={handle_qty} />
-        <button onclick = {onclick}> {"Add this Ingredient"}</button>
+        <br />
+        <button onclick = {onclick} class = "button is-success"> {"Add this Ingredient"}</button>
         </div>
     }
 }
