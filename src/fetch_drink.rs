@@ -44,6 +44,7 @@ pub fn fetch_drink() -> Html {
         let booze_state = booze_state.clone();
 
         let mut data = (*booze_state).clone();
+        data.booze_select.clear();
 
         //go get api
         let drink_url = format!("{}/search/{}", SERV_URL, value);
@@ -160,8 +161,6 @@ pub fn fetch_drink() -> Html {
             <div class = "column is-5">
                 <h1 class="is-size-1, title">{"Build it."}</h1>
                 <Link<Route> classes={classes!("button")} to={Route::Create}>{ "Build a Drink" }</Link<Route>>
-
-
 
             </div>
 

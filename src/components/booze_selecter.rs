@@ -44,19 +44,17 @@ pub fn booze_selecter(props: &Props) -> Html {
         {"Vodka"}
         </button>
         <button class = "navbar-item button is-text"
-        onclick = {&handle_booze} value = {"Tequila"}>
+        onclick = {&handle_booze} value = {"tequila"}>
         {"Tequila"}
         </button>
         <button class = "navbar-item button is-text"
-        onclick = {&handle_booze} value = {"cognac"}>
+        onclick = {&handle_booze} value = {"congnac"}>
         {"Congnac"}
         </button>
         <button class = "navbar-item button is-text"
         onclick = {&handle_booze} value = {"other"}>
         {"Other"}
         </button>
-
-
       </div>
 
     }
