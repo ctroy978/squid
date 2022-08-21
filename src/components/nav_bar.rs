@@ -10,7 +10,7 @@ pub fn nav_bar() -> Html {
             <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
       <Link<Route> classes={classes!("navbar-item")} to={Route::Fetch}>
-        <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28" />
+        <img src= "https://i.postimg.cc/wvmG7w19/Puss.png" width="112" height="50" />
       </Link<Route>>
 
 

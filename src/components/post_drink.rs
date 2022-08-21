@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 use wasm_bindgen_futures;
 
+use crate::SERV_URL;
+
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct AddIngredient {
     label: String,
@@ -25,7 +27,7 @@ pub fn post_server(data: String) {
     let build_drink: BuildDrink = serde_json::from_str(str_data).unwrap();
     wasm_bindgen_futures::spawn_local(async move {
         let res = reqwest::Client::new()
-            .post("http://192.168.1.113:8080/build")
+            .post(SERV_URL)
             .json(&build_drink)
             .send()
             .await
