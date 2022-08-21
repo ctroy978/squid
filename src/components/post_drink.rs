@@ -27,12 +27,17 @@ pub fn post_server(data: String) {
     let build_drink: BuildDrink = serde_json::from_str(str_data).unwrap();
     wasm_bindgen_futures::spawn_local(async move {
         let res = reqwest::Client::new()
-            .post(SERV_URL)
+            .post(format!("{}/build", SERV_URL))
             .json(&build_drink)
             .send()
             .await
             .unwrap();
 
         let returned_value = res.text().await;
+        let x = match returned_value {
+            Ok(val) => format!("vall: {}", val),
+            Err(e) => format!("error: {}", e.to_string()),
+        };
+        log!(x);
     });
 }
