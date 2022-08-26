@@ -1,12 +1,11 @@
-use std::ops::Add;
-
 use gloo::console::log;
 use serde::{Deserialize, Serialize};
+use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
 use crate::components::{
-    booze_selecter::BoozeSelecter, nav_bar::NavBar, post_drink::post_server, select_box::SelectBox,
-    text_area::TextArea, text_box::TextBox,
+    nav_bar::NavBar, post_drink::post_server, select_box::SelectBox, text_area::TextArea,
+    text_box::TextBox,
 };
 use crate::create_ingredient::CreateIngredient;
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
@@ -78,9 +77,31 @@ pub fn create_drink() -> Html {
         cloned_state.set(data);
     });
 
+    //handle ingredient removal
+    let cloned_state = state.clone();
+    let handle_ingredient_removal = Callback::from(move |e: MouseEvent| {
+        let mut data = (*cloned_state).clone();
+        let input: HtmlInputElement = e.target_unchecked_into();
+        let list_number = input.value().parse().unwrap();
+        data.add_ingredient.remove(list_number);
+        cloned_state.set(data);
+    });
+
     let ingredient_list = (*state.add_ingredient)
         .iter()
-        .map(|ing| html! {<li>{ing}</li>});
+        .enumerate()
+        .map(|(num, ing)| {
+            let list_pos: String = num.to_string();
+            html! {
+                <li>
+                 <div>
+                    {ing}{" "}<button value = {list_pos}
+                    class = "button is-small is-rounded is-warning is-hoovered"
+                    onclick = {handle_ingredient_removal.clone()}>{"remove"}</button>
+                 </div>
+                </li>
+            }
+        });
 
     //handle upload
     let cloned_state = state.clone();
