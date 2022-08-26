@@ -1,4 +1,5 @@
 use gloo::console::log;
+use reqwest::Error;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use wasm_bindgen_futures;
@@ -34,10 +35,5 @@ pub fn post_server(data: String) {
             .unwrap();
 
         let returned_value = res.text().await;
-        let x = match returned_value {
-            Ok(val) => format!("vall: {}", val),
-            Err(e) => format!("error: {}", e.to_string()),
-        };
-        log!(x);
     });
 }
