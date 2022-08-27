@@ -1,7 +1,5 @@
-use gloo::console::log;
 use serde::{Deserialize, Serialize};
 use serde_json;
-use web_sys::{HtmlInputElement, Node};
 use yew::prelude::*;
 
 use crate::text_box::TextBox;

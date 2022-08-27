@@ -1,4 +1,3 @@
-use gloo::console::log;
 use serde::{Deserialize, Serialize};
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
@@ -115,6 +114,8 @@ pub fn create_drink() -> Html {
         let data = (*cloned_state).clone();
         let serial_data = serde_json::to_string(&data).unwrap();
         post_server(serial_data);
+        //leave page to avoid duplicating the request.
+        //need to get a return value from async request to handle better.
         history.push(Route::Fetch);
     });
 
@@ -136,6 +137,7 @@ pub fn create_drink() -> Html {
                         </div>
                         <TextArea name = "directions" place_holder = {"Step by step directions"} handle_onchange = {handle_dir} />
                         </div>
+
                     <div class="column is-3">
 
                         <CreateIngredient handle_onclick = {handle_ingredient}/>
@@ -151,6 +153,7 @@ pub fn create_drink() -> Html {
                         <ul>
                             {for ingredient_list}
                         </ul>
+
                         <div class = "py-5">
                         <button onclick={post_drink} class = "button is-danger">{"Post drink to server?"}</button>
                         </div>
@@ -160,8 +163,6 @@ pub fn create_drink() -> Html {
                     </div>
             </div>
         </section>
-
-
         </>
     }
 }
