@@ -1,4 +1,3 @@
-use gloo::console::log;
 use serde_json::Value;
 use wasm_bindgen_futures;
 use web_sys::HtmlInputElement;

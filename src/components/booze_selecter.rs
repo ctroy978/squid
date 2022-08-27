@@ -1,7 +1,5 @@
-use gloo::console::log;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
-use yew_router::prelude::*;
 
 #[derive(Properties, PartialEq, Clone)]
 pub struct Props {

@@ -2,12 +2,15 @@ use gloo::console::log;
 use serde::{Deserialize, Serialize};
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
+use yew_router::prelude::{use_history, History};
 
 use crate::components::{
     nav_bar::NavBar, post_drink::post_server, select_box::SelectBox, text_area::TextArea,
     text_box::TextBox,
 };
 use crate::create_ingredient::CreateIngredient;
+use crate::Route;
+
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 struct AddIngredients {
     label: String,
@@ -32,6 +35,8 @@ struct BuildDrink {
 
 #[function_component(CreateDrink)]
 pub fn create_drink() -> Html {
+    //node ref is for post button
+
     let state = use_state(|| BuildDrink::default());
 
     //handle title
@@ -105,10 +110,12 @@ pub fn create_drink() -> Html {
 
     //handle upload
     let cloned_state = state.clone();
+    let history = use_history().unwrap();
     let post_drink = Callback::from(move |e: MouseEvent| {
         let data = (*cloned_state).clone();
         let serial_data = serde_json::to_string(&data).unwrap();
         post_server(serial_data);
+        history.push(Route::Fetch);
     });
 
     html! {
@@ -132,11 +139,9 @@ pub fn create_drink() -> Html {
                     <div class="column is-3">
 
                         <CreateIngredient handle_onclick = {handle_ingredient}/>
-                        <br />
-                        <button onclick={post_drink} class = "button is-danger">{"Post drink to server?"}</button>
 
                     </div>
-                    <div class="column is-3">
+                    <div class="column is-4">
 
                         <p>{"Drink name: "}{&state.title}</p>
                         <p>{"Rank: "}{&state.rank}</p>
@@ -146,6 +151,11 @@ pub fn create_drink() -> Html {
                         <ul>
                             {for ingredient_list}
                         </ul>
+                        <div class = "py-5">
+                        <button onclick={post_drink} class = "button is-danger">{"Post drink to server?"}</button>
+                        </div>
+                    </div>
+                    <div class="column is-2">
                     </div>
                     </div>
             </div>

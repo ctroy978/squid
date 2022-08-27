@@ -1,5 +1,3 @@
-use gloo::console::log;
-use reqwest::Error;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use wasm_bindgen_futures;
