@@ -1,7 +1,7 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-pub const SERV_URL: &str = "http://192.168.1.113:8080";
+pub const SERV_URL: &str = "http://192.168.1.6:8080";
 
 #[derive(Clone, Routable, PartialEq)]
 enum Route {
